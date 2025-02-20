@@ -1,0 +1,8 @@
+@use "variables" as *;
+@use "components/page";
+@use "components/user-links";
+
+body {
+  font-family: Arial, sans-serif;
+  color: $primary-color;
+}
