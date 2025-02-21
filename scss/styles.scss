@@ -1,6 +1,7 @@
 @use "variables" as *;
 @use "components/page";
 @use "components/user-links";
+@use "components/user-data";
 
 body {
   font-family: Arial, sans-serif;

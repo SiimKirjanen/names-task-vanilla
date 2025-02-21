@@ -84,7 +84,7 @@ function renderUserData($container, userData) {
 }
 
 function generateUserDataItem(label, value) {
-  return `<div class="user-data__item">${label}: ${value}</div>`;
+  return `<div class="user-data__item"><span class="user-data__label">${label}:</span> ${value}</div>`;
 }
 
 export {

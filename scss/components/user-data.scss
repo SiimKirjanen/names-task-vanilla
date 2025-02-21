@@ -1,0 +1,12 @@
+.user-data {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px;
+
+  &__item {
+    padding: 6px;
+  }
+  &__label {
+    font-weight: bold;
+  }
+}

@@ -18,6 +18,18 @@
   text-decoration: none;
 }
 
+.user-data {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px;
+}
+.user-data__item {
+  padding: 6px;
+}
+.user-data__label {
+  font-weight: bold;
+}
+
 body {
   font-family: Arial, sans-serif;
   color: #333;
