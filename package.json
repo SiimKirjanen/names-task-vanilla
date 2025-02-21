@@ -4,12 +4,14 @@
   "main": "index.js",
   "scripts": {
     "build-css": "sass scss/styles.scss css/styles.css",
-    "watch-css": "sass --watch scss/styles.scss:css/styles.css"
+    "watch-css": "sass --watch scss/styles.scss:css/styles.css",
+    "start": "http-server -p 8000"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "http-server": "^14.1.1",
     "sass": "^1.85.0"
   }
 }

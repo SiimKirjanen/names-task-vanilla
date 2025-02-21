@@ -1,3 +1,13 @@
+import {
+  renderSpinner,
+  removeSpinner,
+  renderError,
+  renderSearch,
+  renderUsers,
+  renderUserData,
+} from "./render.js";
+import { getUserIdFromUrl } from "./utils.js";
+
 $(document).ready(function () {
   const $app = $("#app");
   let users = [];
@@ -17,30 +27,30 @@ $(document).ready(function () {
   window.addEventListener("popstate", detectPageToRender);
 
   async function renderHomePage() {
-    renderSpinner();
+    renderSpinner($app);
 
     const loadSuccess = await loadUsers();
     if (!loadSuccess) {
-      renderError("Error loading users");
+      renderError($app, "Error loading users");
       return;
     }
 
-    removeSpinner();
-    renderSearch();
-    renderUsers();
+    removeSpinner($app);
+    renderSearch($app);
+    renderUsers($app, users, search);
     addHomeListeners();
   }
 
   async function renderUserPage(userId) {
-    renderSpinner();
+    renderSpinner($app);
 
     const loadSuccess = await loadUserData(userId);
     if (!loadSuccess) {
-      renderError("Error loading user data");
+      renderError($app, "Error loading user data");
       return;
     }
-    removeSpinner();
-    renderUserData();
+    removeSpinner($app);
+    renderUserData($app, userData);
   }
 
   async function loadUsers() {
@@ -71,115 +81,19 @@ $(document).ready(function () {
     }
   }
 
-  function renderUsers() {
-    removeUsers();
-    const $userLinks = $("<div class='user-links'></div>");
-    const filteredUsers = filterUsers();
-
-    filteredUsers.forEach((user) => {
-      $userLinks.append(
-        `<a href="?user_id=${user.id}" data-user-id="${user.id}" class="user-links__item">${user.name}</a>`
-      );
-    });
-
-    $app.append($userLinks);
-  }
-
-  function removeUsers() {
-    $app.find(".user-links").remove();
-  }
-
-  function renderError(errorMessage) {
-    $app.html(
-      `<div class="alert alert-danger" role="alert">
-          ${errorMessage}
-        </div>`
-    );
-  }
-
-  function renderSearch() {
-    const $searchContainer = $("<div class='search'></div>");
-    const $inputGroup = $("<div class='input-group mb-3'></div>");
-    const $input = $("<input>", {
-      type: "text",
-      class: "form-control",
-      placeholder: "Search",
-      "aria-label": "Username",
-      id: "user-search",
-      autocomplete: "off",
-    });
-
-    $inputGroup.append($input);
-    $searchContainer.append($inputGroup);
-    $app.prepend($searchContainer);
-  }
-
-  function renderSpinner() {
-    $app.html(`<div class="spinner-border" id="loader" role="status"></div>`);
-  }
-
-  function removeSpinner() {
-    $("#loader").remove();
-  }
-
-  function renderUserData() {
-    $userDataWrap = $('<div class="user-data"></div>');
-
-    $userDataWrap.append(generateUserDataItem("Name", userData.name));
-    $userDataWrap.append(generateUserDataItem("Username", userData.username));
-    $userDataWrap.append(generateUserDataItem("Email", userData.email));
-    $userDataWrap.append(generateUserDataItem("Phone", userData.phone));
-    $userDataWrap.append(generateUserDataItem("Website", userData.website));
-    $userDataWrap.append(
-      generateUserDataItem("Street", userData.address.street)
-    );
-    $userDataWrap.append(generateUserDataItem("Suite", userData.address.suite));
-    $userDataWrap.append(generateUserDataItem("City", userData.address.city));
-    $userDataWrap.append(
-      generateUserDataItem("Zipcode", userData.address.zipcode)
-    );
-    $userDataWrap.append(
-      generateUserDataItem("Latitude", userData.address.geo.lat)
-    );
-    $userDataWrap.append(
-      generateUserDataItem("Longitude", userData.address.geo.lng)
-    );
-
-    $userDataWrap.append(
-      generateUserDataItem("Company", userData.company.name)
-    );
-    $userDataWrap.append(
-      generateUserDataItem("Company catch phrase", userData.company.catchPhrase)
-    );
-    $userDataWrap.append(
-      generateUserDataItem("Company bs", userData.company.bs)
-    );
-
-    $("#app").html($userDataWrap);
-  }
-
-  function generateUserDataItem(label, value) {
-    return `<div class="user-data__item">${label}: ${value}</div>`;
-  }
-
-  function filterUsers() {
-    return users.filter((user) => {
-      return user.name.toLowerCase().includes(search);
-    });
-  }
-
-  function getUserIdFromUrl() {
-    const params = new URLSearchParams(window.location.search);
-    return params.get("user_id");
+  function cleanUpHomeListeners() {
+    $("#user-search").off("input");
+    $app.off("click", "a[data-action='navigate']");
   }
 
   function addHomeListeners() {
+    cleanUpHomeListeners();
     $("#user-search").on("input", function () {
       search = $(this).val().toLowerCase();
-      renderUsers();
+      renderUsers($app, users, search);
     });
 
-    $app.on("click", ".user-links__item", function (event) {
+    $app.on("click", "a[data-action='navigate']", function (event) {
       event.preventDefault();
       const userId = $(this).data("user-id");
 
